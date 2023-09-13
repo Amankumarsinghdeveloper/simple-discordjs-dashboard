@@ -1,0 +1,188 @@
+  <%- include("partials/header", { bot, user, path, title: `Conversation Style | ${guild.name}`, activeItem: 'conversation_style', guildID: guild.id }) %>
+<style>
+  /* Custom CSS for the shadow effect */
+  .custom-card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+  }
+
+      .container-sm.center {
+    margin-left: 250px; /* Adjust this value to match the width of your sidebar */
+  margin-top: 90px;
+  }
+
+  @media (min-width: 991.98px) {
+  main {
+    padding-left: 240px;
+  }
+}
+
+/* phone*/
+  @media (max-width: 767px) {
+    .container-sm.center {
+      margin-left: 0;
+      margin-top: 130px;
+    }
+  }
+  
+
+  /* Custom CSS for the shadow effect on hover */
+  .custom-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  
+  .popup-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px; /* Increase the padding to make it bigger */
+    background-color: #f5f5f5; /* Default slightly darker background color */
+    border: 1px solid #ccc; /* Lighter border color */
+    border-radius: 8px; /* Rounded border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: none;
+    /* Adjust the width here */
+    width: 70%;
+    text-align: left;
+    font-size: 18px; /* Increase the font size to make the text bigger */
+    z-index: 999; /* Set a higher z-index to ensure it's displayed above other content */
+  }
+
+  /* Style for the popup message with bg-dark class */
+  .popup-message.bg-dark {
+    background-color: #333; /* Darker background color for bg-dark */
+    border-color: #666; /* Darker border color for bg-dark */
+  }
+
+  /* Style for the right-aligned buttons */
+  .popup-message .d-flex {
+    justify-content: space-between;
+  }
+
+  /* Style for vertically centering the text */
+  .popup-message .d-flex div {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Add margin to the right of the "Cancel" button */
+  .popup-message .btn-danger {
+    margin-right: 10px; /* Adjust the margin value as needed */
+  }
+
+  /* Media query for smaller window resolutions */
+  @media (max-width: 991px) {
+    .popup-message {
+      left: 0; /* Adjust the left position for smaller screens */
+      transform: none; /* Reset the transform */
+      width: 100%; /* Adjust the width to full width for smaller screens */
+    }
+  }
+</style>
+
+<div class="container-sm center" >
+  <div class="row">
+    <div class="col-md-6">
+      <% if (alert) { %>
+        <div class="alert alert-success" role="alert">
+          <%= alert %>
+        </div>
+      <% } %>
+              <h1 class="mb-4">Conversation Style</h1>
+      <hr>
+        <br/>
+        <form method="POST">
+      <div class="card mb-4 custom-card" style="background-color: #121927; color: #fff;">
+        
+        <div class="card-body">
+          <h5 class="card-title">Conversation Example</h5>
+          <p class="card-text" style="font-style: italic;">Set the conversation for your AI as an example of how to talk in the future.</p>
+
+<!-- meow 1 -->
+               <% for (let i = 1; i <= 4; i++) { %>
+          <div class="mb-3">
+            <label for="user_<%= i %>" class="form-label">User:</label>
+            <input type="text" name="user_<%= i %>" value="<%= settings['user_' + i] %>" class="form-control" style="background-color: #0d1422; color: #FFFFFF;">
+          </div>
+          <div class="mb-3">
+            <label for="assistant_<%= i %>" class="form-label">AI:</label>
+            <input type="text" name="assistant_<%= i %>" value="<%= settings['assistant_' + i] %>" class="form-control" style="background-color: #0d1422; color: #FFFFFF;">
+          </div>
+        <% } %>
+        <!-- meow 2 -->  
+        </div>
+      </div>
+     
+       
+  <div class="mt-4 text-center">
+    <button id="saveButton" type="submit" class="btn btn-secondary text-white" style="display: none;">Save Settings</button>
+  </div>
+</div>
+
+<!-- Popup message for changes -->
+<div class="popup-message bg-light" id="popupMessage">
+  <div class="d-flex justify-content-between">
+    <div>
+      Changes detected! Please save or cancel.
+    </div>
+    <div>
+      <button class="btn btn-danger text-white" onclick="cancelChanges()">Cancel</button>
+      <button class="btn btn-success text-white" type="submit" onclick="saveChanges()">Save</button>
+    </div>
+  </div>
+</div>
+ </form>
+<%- include("partials/footer") %>
+
+<script>
+      let changesDetected = false;
+
+    function listenForChanges() {
+      const inputFields = document.querySelectorAll('[name^="assistant_"], [name^="user_"]');
+      inputFields.forEach((input) => {
+        input.addEventListener('input', () => {
+          if (input.value !== input.dataset.originalValue) {
+            showPopup();
+            changesDetected = true;
+          } else {
+            hidePopup();
+            changesDetected = false;
+          }
+        });
+        // Store the original values as data attributes for comparison
+        input.dataset.originalValue = input.value;
+      });
+    }
+
+
+    // Call the listenForChanges function to start listening for changes
+    listenForChanges();
+
+
+  function showPopup() {
+    document.getElementById('popupMessage').style.display = 'block';
+    document.getElementById('saveButton').style.display = 'none';
+  }
+
+  function hidePopup() {
+    document.getElementById('popupMessage').style.display = 'none';
+    document.getElementById('saveButton').style.display = 'none';
+  }
+
+  function saveChanges() {
+    // Your save changes logic here
+    // You can submit the form or perform any other actions
+    hidePopup();
+  }
+
+  function cancelChanges() {
+    // Your cancel changes logic here
+    // You can reset the form or perform any other actions
+    document.querySelector('textarea[name="trainData"]').value = originalTrainData;
+    document.querySelector('input[name="talkingStyle"]').value = originalTalkingStyle;
+    hidePopup();
+  }
+</script>

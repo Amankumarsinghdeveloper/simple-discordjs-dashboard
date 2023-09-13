@@ -1,0 +1,492 @@
+<%- include("partials/header", { bot, user, path, title: `Reply Triggers | ${guild.name}`, activeItem: 'reply-triggers', guildID: guild.id }) %>
+
+
+<style>
+
+  @media (min-width: 991.98px) {
+  main {
+    padding-left: 240px;
+  }
+}
+  
+  /* Custom CSS for the shadow effect */
+  .custom-card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+  }
+
+      .container-sm.center {
+    margin-left: 250px; /* Adjust this value to match the width of your sidebar */
+  margin-top: 90px;
+  }
+
+/* phone*/
+  @media (max-width: 767px) {
+    .container-sm.center {
+      margin-left: 0;
+      margin-top: 130px;
+    }
+  }
+    body.theme-light .custom-card {
+    background-color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(10, 16, 30, 0.125);
+  }
+
+  body.theme-dark .custom-card {
+    background-color: #343a40;
+    box-shadow: 0 0.125rem 0.25rem rgba(10, 16, 30, 0.125);
+  }
+
+  body.theme-light .custom-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  body.theme-dark .custom-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(255, 255, 255, 0.15);
+  }
+
+  /* Custom CSS for the shadow effect on hover */
+  .custom-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  .dropdown-menu a.dropdown-item {
+  color: #fff; /* Set the text color to white */
+}
+
+/* Style for the dropdown menu items on hover */
+.dropdown-menu a.dropdown-item:hover {
+  background-color: #343a40; /* Change the background color on hover */
+  color: #fff; /* Set the text color to white on hover */
+}
+
+
+   .popup-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px; /* Increase the padding to make it bigger */
+    background-color: #f5f5f5; /* Default slightly darker background color */
+    border: 1px solid #ccc; /* Lighter border color */
+    border-radius: 8px; /* Rounded border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: none;
+    /* Adjust the width here */
+    width: 70%;
+    text-align: left;
+    font-size: 18px; /* Increase the font size to make the text bigger */
+    z-index: 999; /* Set a higher z-index to ensure it's displayed above other content */
+  }
+
+  /* Style for the popup message with bg-dark class */
+  .popup-message.bg-dark {
+    background-color: #333; /* Darker background color for bg-dark */
+    border-color: #666; /* Darker border color for bg-dark */
+  }
+
+  /* Style for the right-aligned buttons */
+  .popup-message .d-flex {
+    justify-content: space-between;
+  }
+
+  /* Style for vertically centering the text */
+  .popup-message .d-flex div {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Add margin to the right of the "Cancel" button */
+  .popup-message .btn-danger {
+    margin-right: 10px; /* Adjust the margin value as needed */
+  }
+
+  /* Media query for smaller window resolutions */
+  @media (max-width: 991px) {
+    .popup-message {
+      left: 0; /* Adjust the left position for smaller screens */
+      transform: none; /* Reset the transform */
+      width: 100%; /* Adjust the width to full width for smaller screens */
+    }
+  }
+</style>
+
+<div class="container-sm center">
+  <div class="row">
+    <div class="col-md-6">
+      <% if (alert) { %>
+        <div class="alert alert-success" role="alert">
+          <%= alert %>
+        </div>
+      <% } %>
+      <h1 class="mb-4">Reply Triggers</h1>
+      <hr>
+      <br/>
+      <form id="channelForm" method="POST">
+        <div class="card custom-card mb-4" style="background-color: #121927; color: #fff;"> <!-- Added margin-bottom -->
+          <div class="card-body">
+            <h5 class="card-title">Keyword Triggers</h5>
+            <p class="card-text" style="font-style: italic;">Specify trigger words for auto-replies</p>
+            <div id="keywordTriggersContainer"></div>
+            <input type="text" class="form-control text-light" name="keywordTriggerInput" id="keywordTriggerInput" placeholder="Enter a keyword and press Enter" style="background-color: #121927; color: #fff;">
+          </div>
+        </div>
+        <div class="card custom-card" style="background-color: #121927; color: #fff;">
+          <div class="card-body">
+            <h5 class="card-title">Monitored Channels</h5>
+            <p class="card-text" style="font-style: italic;">Choose Discord channels for AI to always listen</p>
+            <div class="input-group">
+              <div id="selectedChannels" style="min-width: 40%; background-color: #0d1422; color: #0d1422;" class="input-group-text"></div>
+              <input
+    type="hidden"
+    id="selectedSupportChannels"
+    name="selectedSupportChannels"
+    
+  >
+      <button
+  class="btn btn-outline-secondary"
+  type="button"
+  id="channelSelector"
+  data-bs-toggle="dropdown"
+  aria-haspopup="true"
+  aria-expanded="false"
+  style="margin-left: 10px;"
+>
+  Select Channel
+</button>
+      <ul class="dropdown-menu" aria-labelledby="channelSelector" style="background-color: #121927;">
+        <% channels.forEach(channel => { %>
+<li><a class="dropdown-item" href="#" onclick="addChannelFromDropdown('<%= channel.channelName %>', '<%= channel.channelId %>')">#<%= channel.channelName %></a></li>
+        <% }); %>
+      </ul>
+    </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+      </form>
+      <div class="mt-4 text-center">
+        <button id="saveButton" type="submit" class="btn btn-secondary text-white" style="display: none;">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+       
+  <div class="mt-4 text-center">
+    <button id="saveButton" type="submit" class="btn btn-secondary text-white" style="display: none;">Save Settings</button>
+  </div>
+</div>
+
+<!-- Popup message for changes -->
+<div class="popup-message bg-light" id="popupMessage">
+  <div class="d-flex justify-content-between">
+    <div>
+      Changes detected! Please save or cancel.
+    </div>
+    <div>
+      <button class="btn btn-danger text-white" onclick="cancelChanges()">Cancel</button>
+      <button class="btn btn-success text-white" type="submit" onclick="saveChanges()">Save</button>
+    </div>
+  </div>
+</div>
+ </form>
+<%- include("partials/footer") %>
+
+<script>
+
+  // premium shit
+
+  const premiumLevel = `<%= settings.premium %>`; 
+let maxCharacterLimit;
+if (premiumLevel == "1") {
+
+  maxCharacterLimit = 2500;
+} else if (premiumLevel == "2") {
+  maxCharacterLimit = 5000;
+} else {
+  maxCharacterLimit = 600;
+}
+
+
+
+const selectedChannels = new Set();
+const selectedWords = new Set();
+
+<% settings.keywordTriggers.forEach(word => { %>
+  selectedWords.add({ word: '<%= word %>' });
+<% }); %>
+  
+<% settings.selectedChannelIds.forEach(channel => { %>
+  selectedChannels.add({ channelName: '<%= channel.channelName %>', channelId: '<%= channel.channelId %>' });
+<% }); %>
+
+updateSelectedWordsContainer()
+  function updateSelectedWordsContainer() {
+  const keywordTriggersContainer = document.getElementById('keywordTriggersContainer');
+  keywordTriggersContainer.innerHTML = '';
+
+  selectedWords.forEach(word => {
+    const badge = document.createElement('span');
+    badge.className = 'badge bg-secondary me-1';
+    badge.textContent = word.word;
+
+    const removeBadge = document.createElement('span');
+    removeBadge.className = 'badge bg-danger rounded-circle ms-1';
+    removeBadge.style.cursor = 'pointer'; 
+    removeBadge.textContent = 'X';
+    removeBadge.onclick = () => removeSelectedWords(word.word);
+
+    badge.appendChild(removeBadge);
+    keywordTriggersContainer.appendChild(badge);
+  });
+}
+  
+function updateSelectedChannels() {
+  const selectedChannelsDiv = document.getElementById('selectedChannels');
+  selectedChannelsDiv.innerHTML = '';
+  selectedChannels.forEach(channel => {
+    const chip = document.createElement('span');
+    chip.className = 'badge bg-secondary me-1';
+    chip.textContent = "#" + channel.channelName;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'badge bg-danger rounded-circle ms-1';
+    closeBtn.style.cursor = 'pointer'; 
+    closeBtn.textContent = 'X';
+  //  console.log(channel.channelId)
+    closeBtn.onclick = () => removeChannel(channel.channelName, channel.channelId);
+    chip.appendChild(closeBtn);
+    selectedChannelsDiv.appendChild(chip);
+  });
+}
+
+  
+
+updateSelectedChannels();
+function updateSelectedChannels() {
+  const selectedChannelsDiv = document.getElementById('selectedChannels');
+  selectedChannelsDiv.innerHTML = '';
+  selectedChannels.forEach(channel => {
+    const chip = document.createElement('span');
+    chip.className = 'badge bg-secondary me-1';
+    chip.textContent = "#" + channel.channelName;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'badge bg-danger rounded-circle ms-1';
+    closeBtn.style.cursor = 'pointer'; 
+    closeBtn.textContent = 'X';
+  //  console.log(channel.channelId)
+    closeBtn.onclick = () => removeChannel(channel.channelName, channel.channelId);
+    chip.appendChild(closeBtn);
+    selectedChannelsDiv.appendChild(chip);
+  });
+}
+
+
+
+function updateSelectedChannelIds(channelId) {
+  const selectedChannelIdsInput = document.getElementById('selectedChannelIds');
+  const selectedIds = selectedChannelIdsInput.value.split(',');
+  if (!selectedIds.includes(channelId)) {
+    selectedIds.push(channelId);
+    selectedChannelIdsInput.value = selectedIds.join(',');
+  }
+}
+  const keywordTriggersContainer = document.getElementById('keywordTriggersContainer');
+  const keywordTriggersInput = document.getElementById('keywordTriggers');
+
+    const keywordTriggers1 = `<%= settings.keywordTriggers %>`; 
+
+  const keywordTriggers = JSON.stringify(keywordTriggers1);
+
+  
+
+  async function removeSelectedWords(word) {
+  //selectedChannels.delete(channel);
+ // updateSelectedChannels();
+
+  
+  const formData = new FormData(channelForm);
+const formDataObject = {};
+for (const [key, value] of formData.entries()) {
+    formDataObject[key] = value;
+}
+
+// Adding channel
+const additionalObject = {
+  wordChange: 1,
+  keywordTriggerInput: word
+};
+const updatedFormData = {
+    ...formDataObject,
+    ...additionalObject
+};
+  //console.log(updatedFormData)
+            try {
+                    const response = await fetch(channelForm.action, {
+        method: "POST",
+        body: JSON.stringify(updatedFormData), // Convert the object to JSON
+        headers: {
+            "Content-Type": "application/json" // Set the content type to JSON
+        }
+    });
+                
+                if (response.ok) {
+                    // Handle successful response
+                    console.log("Form submitted successfully");
+
+                  // update
+                  // update
+
+const wordToRemove = [...selectedWords].find(word => word === word);
+if (wordToRemove) {
+  selectedWords.delete(wordToRemove);
+  updateSelectedWordsContainer(selectedWords);
+}
+  //updateSelectedChannelIds(channelId);
+                  
+                } else {
+                    // Handle error response
+                    console.error("Form submission failed");
+                }
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            }
+  
+}
+  
+async function removeChannel(channelName, channelId) {
+  //selectedChannels.delete(channel);
+ // updateSelectedChannels();
+
+  
+  const formData = new FormData(channelForm);
+const formDataObject = {};
+for (const [key, value] of formData.entries()) {
+    formDataObject[key] = value;
+}
+
+// Adding channel
+const additionalObject = {
+  channelChange: 1,
+    channelAdd: {
+    "channelName": channelName,
+    "channelId": channelId
+  }
+};
+const updatedFormData = {
+    ...formDataObject,
+    ...additionalObject
+};
+  //console.log(updatedFormData)
+            try {
+                    const response = await fetch(channelForm.action, {
+        method: "POST",
+        body: JSON.stringify(updatedFormData), // Convert the object to JSON
+        headers: {
+            "Content-Type": "application/json" // Set the content type to JSON
+        }
+    });
+                
+                if (response.ok) {
+                    // Handle successful response
+                    console.log("Form submitted successfully");
+
+                  // update
+                  // update
+
+ const channelToRemove = [...selectedChannels].find(channel => channel.channelId === channelId);
+      if (channelToRemove) {
+        selectedChannels.delete(channelToRemove);
+        updateSelectedChannels();
+      }
+  //updateSelectedChannelIds(channelId);
+                  
+                } else {
+                    // Handle error response
+                    console.error("Form submission failed");
+                }
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            }
+  
+}
+
+async function addChannelFromDropdown(channelName, channelId) {
+
+  //  event.preventDefault(); // Prevent the default form submission behavior
+            
+
+  const formData = new FormData(channelForm);
+const formDataObject = {};
+for (const [key, value] of formData.entries()) {
+    formDataObject[key] = value;
+}
+
+// Adding channel
+const additionalObject = {
+  channelChange: 0,
+    channelAdd: {
+    "channelName": channelName,
+    "channelId": channelId
+  }
+};
+const updatedFormData = {
+    ...formDataObject,
+    ...additionalObject
+};
+            try {
+                    const response = await fetch(channelForm.action, {
+        method: "POST",
+        body: JSON.stringify(updatedFormData), // Convert the object to JSON
+        headers: {
+            "Content-Type": "application/json" // Set the content type to JSON
+        }
+    });
+                
+                if (response.ok) {
+                    // Handle successful response
+                    console.log("Form submitted successfully");
+
+                  // update
+ selectedChannels.add({ channelName: channelName, channelId: channelId });
+  
+  updateSelectedChannels();
+  updateSelectedChannelIds(channelId);
+
+                } else {
+                    // Handle error response
+                    console.error("Form submission failed");
+                }
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            }
+  //addChannel(channelName, channelId);
+}
+
+
+  function showPopup() {
+    document.getElementById('popupMessage').style.display = 'block';
+    document.getElementById('saveButton').style.display = 'none';
+  }
+
+  function hidePopup() {
+    document.getElementById('popupMessage').style.display = 'none';
+    document.getElementById('saveButton').style.display = 'none';
+  }
+
+  function saveChanges() {
+    // Your save changes logic here
+    // You can submit the form or perform any other actions
+    hidePopup();
+  }
+
+  function cancelChanges() {
+    // Your cancel changes logic here
+    // You can reset the form or perform any other actions
+    document.querySelector('textarea[name="trainData"]').value = originalTrainData;
+    document.querySelector('input[name="talkingStyle"]').value = originalTalkingStyle;
+    hidePopup();
+  }
+</script>

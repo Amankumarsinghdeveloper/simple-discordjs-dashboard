@@ -1,49 +1,157 @@
-<html lang="en">
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link href="/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/style.css">
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Laralink">
+  <!-- Page Title -->
+  <title><%= title %></title>
+  <!-- Favicon Icon -->
+  <link rel="icon" href="/assets/img/nurmonicpfp.png" />
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/assets/css/fontawesome.css" />
+  <link rel="stylesheet" href="/assets/css/slick.css" />
+  <link rel="stylesheet" href="/assets/css/lightgallery.min.css" />
+  <link rel="stylesheet" href="/assets/css/animate.css" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <!-- Your Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/custom.css" />
+  <style>
+    @media (max-width: 991px) {
+      .auth-elements {
+        display: block; /* Show the auth elements on mobile devices */
+      }
+
+      /* Hide the auth elements when the Navbar is expanded */
+      .navbar .navbar-collapse.show + .auth-elements,
+      .navbar .navbar-collapse.show .auth-elements {
+        display: none;
+      }
+    }
+    
+    /* Styling for the sidebar */
+    .st-sidebar {
+      position: fixed;
+      top: 188px;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      color: #0a101e; /* Adjust text color as needed */
+      overflow-y: auto;
+    }
+    
+    .st-sidebar a {
+      color: #0a101e; /* Link text color */
+      background-color: #0a101e;
+    }
+    
+    .st-sidebar a.active {
+      background-color: #111822; /* Active link background color */
+    }
+
+    .st-sidebar a:hover {
+  background-color: #111822; /* Hover background color */
+}
+
+    /* Remove the blue box (outline) around the selected sidebar button */
+.st-sidebar a.active,
+.st-sidebar a.active:focus,
+.st-sidebar a.active:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+    
+    .st-main-content {
+      margin-left: 250px; /* Set margin to match sidebar width */
+      padding: 15px; /* Add some padding to content */
+    }
+
+  </style>
 </head>
+
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Discord.js Simple Dashboard</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/dashboard">Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link #3</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link #4</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <% if (user) { %>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Logged in as <%= user.username %>#<%= user.discriminator %>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
-                <li><a class="dropdown-item" href="#">Option #2</a></li>
-                <li><a class="dropdown-item" href="#">Options #3</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/logout">Logout</a></li>
-              </ul>
-            </li>
-            </li>
-          <% } else { %>
-            <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
-          <% } %>
-        </ul>
+<!-- Start Header Section -->
+<header class="st-site-header st-style1 st-sticky-header">
+  <div class="st-main-header">
+    <div class="container">
+      <div class="st-main-header-in" style="display: flex; align-items: center;">
+        <div class="st-main-header-left" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+          <a class="st-site-branding" href="/"><img src="/assets/img/nurmonic.png" alt="Nurmonic"></a>
+        </div>
+        <div class="st-main-header-right" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+          <div class="st-nav">
+            <ul class="st-nav-list st-onepage-nav">
+              <% if (user) { %>
+              <div style="display: flex; align-items: center;">
+                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=256" class="rounded-circle" alt="User Profile Picture" style="width: 32px; height: 32px; margin-right: 10px;">
+                <a class="logged-in-text" style="font-size: 18px;"><%= user.global_name %></a>
+              </div>
+              <% } else { %>
+              <button type="button" href="/login" class="btn btn-primary">Login</button>
+              <% } %>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</header>
+
+
+
+
+
+
+
+  <!-- End Header Section -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+<aside class="col-lg-3 col-md-4 col-sm-12 bg-dark text-light">
+  <!-- Sidebar content goes here -->
+  <nav class="st-sidebar">
+    <div class="list-group">
+      <a href="/dashboard/<%= guildID %>" class="list-group-item list-group-item-action py-2 text-light <%= activeItem === 'home' ? 'active' : '' %>">
+        <i class="fas fa-tachometer-alt fa-fw me-3"></i><span> Personality</span>
+      </a>
+      <a href="/conversation/<%= guildID %>" class="list-group-item list-group-item-action py-2 text-light <%= activeItem === 'conversation_style' ? 'active' : '' %>">
+        <i class="fas fa-chart-area fa-fw me-3"></i><span> Conversation Style</span>
+      </a>
+      <a href="/support-ai/<%= guildID %>" class="list-group-item list-group-item-action py-2 text-light <%= activeItem === 'support-ai' ? 'active' : '' %>">
+        <i class="fas fa-chart-area fa-fw me-3"></i><span> Support AI</span>
+      </a>
+      <a href="/automod-ai/<%= guildID %>" class="list-group-item list-group-item-action py-2 text-light <%= activeItem === 'automod-ai' ? 'active' : '' %>">
+        <i class="fas fa-lock fa-fw me-3"></i><span> Automod AI</span>
+      </a>
+      <a href="/reply-triggers/<%= guildID %>" class="list-group-item list-group-item-action py-2 text-light <%= activeItem === 'reply-triggers' ? 'active' : '' %>">
+        <i class="fas fa-filter  fa-fw me-3"></i><span> Reply Triggers</span>
+      </a>
+    </div>
   </nav>
+</aside>
+<!-- End Sidebar -->
+
+
+      <!-- Main Content -->
+      <main class="col-lg-9 col-md-8 col-sm-12">
+        <!-- Your main content goes here -->
+      </main>
+      <!-- End Main Content -->
+    </div>
+  </div>
+
+  <!-- Your JavaScript and jQuery libraries -->
+  <script src="/assets/js/jquery.min.js"></script>
+  <script src="/assets/js/bootstrap.min.js"></script>
+  <!-- Your custom scripts -->
+  <script src="/assets/js/custom.js"></script>
+</body>
+
+</html>

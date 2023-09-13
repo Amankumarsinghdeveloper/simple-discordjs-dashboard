@@ -1,0 +1,217 @@
+<%- include("partials/header_topbar", { bot, user, path, title: "Premium" }) %>
+
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="dashcss/pricing-plan.css">
+</head>
+<body data-new-gr-c-s-check-loaded="14.1034.0" data-gr-ext-installed="">
+
+  <style>
+      .modal-header .close {
+    display: none;
+  }
+  </style>
+  <main>
+    <div class="container">
+      <h5 class="text-center pricing-table-subtitle">PRICING PLAN</h5>
+      <h1 class="text-center pricing-table-title">Pricing Table</h1>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card pricing-card pricing-plan-basic">
+            <div class="card-body">
+              <i class="mdi mdi-cube-outline pricing-plan-icon"></i>
+              <p class="pricing-plan-title">Basic</p>
+              <h3 class="pricing-plan-cost ml-auto">FREE</h3>
+              <ul class="pricing-plan-features">
+                <li>5 messages/minute</li>
+                <li>Free Prompts</li>
+                <li>Message filter</li>
+                <li>3 Support Teachings</li>
+                <li>2 Automod AI instructions</li>
+              </ul>
+              <a href="#!" class="btn pricing-plan-purchase-btn">Free</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card pricing-card pricing-card-highlighted  pricing-plan-pro">
+            <div class="card-body">
+                <i class="mdi mdi-star pricing-plan-icon"></i>
+              <p class="pricing-plan-title">Premium</p>
+      <h3 class="pricing-plan-cost ml-auto">$4.99<span style="font-size: 14px; vertical-align: super;">/monthly</span></h3>
+              <ul class="pricing-plan-features">
+                <li>30 messages/minute</li>
+                <li>Exclusive Prompts</li>
+                <li>No Message filter</li>
+                <li>15 Support Teachings</li>
+                <li>Unlimited Automod AI instructions</li>
+              </ul>
+<a  class="btn pricing-plan-purchase-btn" onclick="openCustomModal()">Purchase</a>
+
+
+           
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card pricing-card pricing-plan-enterprise">
+            <div class="card-body">
+              <i class="mdi mdi-wallet-giftcard pricing-plan-icon"></i>
+              <p class="pricing-plan-title">Professional</p>
+      <h3 class="pricing-plan-cost ml-auto">$9.99<span style="font-size: 14px; vertical-align: super;">/monthly</span></h3>
+              <ul class="pricing-plan-features">
+                <li>Unlimited messages</li>
+                <li>100 participants max</li>
+                <li>Custom Hold Music</li>
+                <li>10 participants max</li>
+              </ul>
+              <a href="#!" class="btn pricing-plan-purchase-btn">Purchase</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+       <!-- Add this modal at the end of the HTML body -->
+<div class="modal fade" id="serverSelectionModal" tabindex="-1" aria-labelledby="serverSelectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="modalContent">
+      <div class="modal-header">
+        <h5 class="modal-title" id="serverSelectionModalLabel">Select a Server</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+  <ul id="serverList" class="list-group">
+  <% user.guilds.forEach(guild => {
+    const permsOnGuild = new perms(guild.permissions_new);
+    if (!permsOnGuild.has(perms.FLAGS.MANAGE_GUILD)) return;
+                const botGuild = bot.guilds.cache.get(guild.id);
+          
+ const premiumGuild = premiumGuilds.find(premiumGuild => premiumGuild.guildID === guild.id);
+    const isPremium = !!premiumGuild;
+    if (isPremium) {
+      if (premiumGuild.premium === 1) {
+return;
+      } else if (premiumGuild.premium === 2) {
+return;
+          }
+    }
+          
+          %>
+  <li class="list-group-item server-list-item" data-guild-id="<%= guild.id %>">
+    <div class="server-list-item-content">
+      <!-- ... (existing banner and icon code) ... -->
+                       <div class="server-info">
+                    <h5><%= guild.name %></h5>
+                    <% if (!botGuild) { %>
+                      <div>
+   <button
+                          class="btn btn-primary text-white"
+                          disabled
+                        >
+                          Add the bot to this server first
+                        </button>
+                      </div>
+                    <% } else if (isPremium && premiumGuild.premium === 1) { %>
+                      <div>
+                        <p>Already a premium server (Level 1).</p>
+                      </div>
+                    <% } else if (isPremium && premiumGuild.premium === 2) { %>
+                      <div>
+                        <p>Already a premium server (Level 2).</p>
+                      </div>
+                    <% } else { %>
+                      <div>
+                        <button
+                          class="btn btn-primary text-white"
+                          data-sellix-product="64eb73bedca31"
+                          data-sellix-custom-serverid="<%= guild.id %>"
+                          type="submit"
+                        >
+                          Purchase
+                        </button>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+              </li>
+              <% }); %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </main>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const serverListItems = document.querySelectorAll('#serverList .server-list-item');
+    const selectServerButton = document.getElementById('yourPurchaseButtonId'); // Replace with your actual button ID
+
+    serverListItems.forEach(item => {
+      const purchaseButton = item.querySelector('.btn');
+
+      purchaseButton.addEventListener('click', function () {
+        const selectedGuildId = item.getAttribute('data-guild-id');
+        selectServerButton.setAttribute('data-sellix-custom-serverid', selectedGuildId);
+        $('#serverSelectionModal').modal('hide'); // Close the modal
+      });
+    });
+  });
+
+    function openCustomModal() {
+    const theme = document.body.getAttribute('data-theme'); // Get the theme class from body
+    const modalContent = document.getElementById('modalContent');
+    const serverListItems = document.querySelectorAll('#serverList .server-list-item');
+
+
+      serverListItems.forEach(item => {
+        item.classList.remove("bg-light", "bg-dark");
+        item.classList.remove("text-light", "text-dark");
+
+     if(theme === "dark"){
+               item.classList.add("bg-dark", "text-light");
+
+     }
+     else {
+                      item.classList.add("bg-light", "text-dark");
+
+     }
+    });
+    
+    // Apply the theme class to the modal content
+    if (theme === 'dark') {
+      modalContent.classList.add('bg-dark', 'text-light');
+
+    } else if (theme === 'light') {
+      modalContent.classList.add('bg-light', 'text-dark');
+      
+    }
+    
+    jQuery('#serverSelectionModal').modal('show');
+  }
+  
+</script>
+
+
+
+  
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.sellix.io/static/js/embed.js"></script>
+
+
+</body></html>
+  
+
+  

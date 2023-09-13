@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Laralink">
+  <!-- Page Title -->
+  <title><%= title %></title>
+  <!-- Favicon Icon -->
+  <link rel="icon" href="/assets/img/nurmonicpfp.png" />
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/assets/css/fontawesome.css" />
+  <link rel="stylesheet" href="/assets/css/slick.css" />
+  <link rel="stylesheet" href="/assets/css/lightgallery.min.css" />
+  <link rel="stylesheet" href="/assets/css/animate.css" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body id="home">
+  <!-- Start Header Section -->
+<header class="st-site-header st-style1 st-sticky-header">
+  <div class="st-main-header">
+    <div class="container">
+      <div class="st-main-header-in" style="display: flex; align-items: center;">
+        <div class="st-main-header-left" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+          <a class="st-site-branding" href="/"><img src="/assets/img/nurmonic.png" alt="Nurmonic"></a>
+        </div>
+        <div class="st-main-header-right" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+          <div class="st-nav">
+            <ul class="st-nav-list st-onepage-nav">
+              <% if (user) { %>
+              <div style="display: flex; align-items: center;">
+                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=256" class="rounded-circle" alt="User Profile Picture" style="width: 32px; height: 32px; margin-right: 10px;">
+                <a class="logged-in-text" style="font-size: 18px;"><%= user.global_name %></a>
+              </div>
+              <% } else { %>
+              <button type="button" href="/login" class="btn btn-primary">Login</button>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- End Header Section -->

@@ -1,27 +1,131 @@
-<%- include("partials/header", { bot, user, path, title: "Select server" }) %>
+<%- include("partials/header_topbar", { bot, user, path, title: "Select server" }) %>
+
+
+<!-- Favicon Icon -->
+<link rel="icon" href="img/nurmonicpfp.png" />
+<style>
+  .banner-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  
+
+  .banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(10px); /* Adjust the blur amount as needed */
+  }
+  
+
+  .icon-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px; /* Adjust the size of the icon as needed */
+    height: 100px; /* Adjust the size of the icon as needed */
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.8); /* Adjust the background color and opacity as needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2.5px white; /* Add a white border with 4px thickness */
+  }
+
+  .guild-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .icon-placeholder {
+    font-size: 36px; /* Adjust the font size as needed */
+    color: #666; /* Adjust the color as needed */
+    text-transform: uppercase;
+  }
+</style>
+
+<div style="text-align: center; padding-top: 100px;">
+  <h1>Select a server</h1>
+  
+</div>
 
 <div style="display: flex; flex-wrap: wrap; justify-content: center;">
   <% user.guilds.forEach(guild => {
       const permsOnGuild = new perms(guild.permissions_new);
       if(!permsOnGuild.has(perms.FLAGS.MANAGE_GUILD)) return;
+ const premiumGuild = premiumGuilds.find(premiumGuild => premiumGuild.guildID === guild.id);
+    const isPremium = !!premiumGuild;
+    const premiumLabel = isPremium ? (premiumGuild.premium === 1 ? "Premium" : "Professional") : "";
+    
   %>
 
-    <div class="card" style="max-width: 18rem; margin: 2rem; min-width: 10em;">
-    <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="card-img-top" style="max-width: 18rem;">` : `<img src="https://cdn.discordapp.com/attachments/765919453766352916/877787616974622770/wCfHtuoejLIbAAAAABJRU5ErkJggg.png" class="card-img-top" style="max-width: 18rem;">` %>
-      <div class="card-body">
-        <h5 class="card-title"><%= guild.name %></h5>
-        <% if (bot.guilds.cache.get(guild.id)) { %>
-          <p class="card-text">Edit <%= guild.name %>'s settings via the dashboard by clicking the button below.</p>
-          <a href="/dashboard/<%- guild.id %>" class="btn btn-success text-white">Edit Settings</a>
+    <style>
+    /* Add a class to style the cards */
+    .glow-card {
+        max-width: 30rem;
+        min-width: 25rem;
+        margin: 2rem;
+        background-color: #343a40; /* Set the background color of the card */
+        transition: box-shadow 0.3s; /* Add a transition for smooth hover effect */
+        border-radius: 10px; /* Add some border radius for rounded corners */
+    }
+
+    /* Apply the glow effect on hover */
+    .glow-card:hover {
+        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5); /* Adjust the box-shadow to control the glow effect */
+    }
+</style>
+
+  <div class="card glow-card bg-dark text-light" style="max-width: 30rem; min-width: 25rem; margin: 2rem;">
+
+    <div class="banner-container">
+      <% if (guild.banner) { %>
+        <img class="banner-image" src="https://cdn.discordapp.com/banners/<%= guild.id %>/<%= guild.banner %>" alt="Guild Banner">
+      <% } else { %>
+        <img class="banner-image" src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>" alt="          ">
+      <% } %>
+      <div class="icon-container">
+        <% if (guild.icon) { %>
+          <img class="guild-icon" src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>" alt="Guild Icon">
         <% } else { %>
-          <p class="card-text">Invite the bot to <%= guild.name %> in order to view their guild's settings via the dashboard by clicking the button below.</p>
-          <a href="<%= `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&guild_id=${guild.id}&response_type=code&redirect_uri=${encodeURIComponent(`${bot.config.domain}${bot.config.port == 80 ? "" : `:${bot.config.port}`}/callback`)}`  %>" class="btn btn-primary text-white">Invite Bot</a>
+          <div class="icon-placeholder"><%= guild.name.charAt(0).toUpperCase() %></div>
         <% } %>
       </div>
     </div>
-  <%
-      });
-  %>
+
+          
+    <div class="card-body">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h5 class="card-title" style="margin: 0;"><%= guild.name %></h5>
+        <div>
+            <% if (bot.guilds.cache.get(guild.id)) { %>
+                <a href="/dashboard/<%- guild.id %>" class="st-btn st-style1 st-color1 st-smooth-move" style="background-color: #00FF00;">Edit Settings</a>
+
+            <% } else { %>
+                <a href="<%= `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&guild_id=${guild.id}&response_type=code&permissions=1101659121664&redirect_uri=https%3A%2F%2Fnurmonic.xyz%2Fdashboard`  %>" class="st-btn st-style1 st-color1 st-smooth-move">Invite Bot</a>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+              
+
+                             <% if (isPremium) { %>
+    <div style="position: absolute; top: 10px; right: 10px; background-color: gold; color: black; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+        <%= premiumLabel %>
+
+    </div>
+  <% } %>
+  </div>
+
+  <% }); %>
 </div>
 
 <%- include("partials/footer") %>
